@@ -160,8 +160,8 @@ def get_answer_index(context, context_token, answer_start, answer_end):
         p_token += 1
     return (None, None)
 train['answer_start_token'], train['answer_end_token'] = \
-    zip(*[get_answer_index(a, b, c, d, e) for a, b, c, d, e in
-          zip(train.context, train.answer, context_tokens,
+    zip(*[get_answer_index(a, c, d, e) for a, c, d, e in
+          zip(train.context, context_tokens,
               train.answer_start, train.answer_end)])
 initial_len = len(train)
 train.dropna(inplace=True)
@@ -273,8 +273,14 @@ meta = {
 with open('SQuAD/meta.msgpack', 'wb') as f:
     msgpack.dump(meta, f)
 result = {
+    'trn_question_tokens': question_tokens[:len(train)],
+    'dev_question_tokens': question_tokens[len(train):],
+    'trn_question_text': question_text[:len(train)],
+    'dev_question_text': question_text[len(train):],
     'trn_question_ids': question_ids[:len(train)],
     'dev_question_ids': question_ids[len(train):],
+    'trn_context_tokens': context_tokens[:len(train)],
+    'dev_context_tokens': context_tokens[len(train):],
     'trn_context_ids': context_ids[:len(train)],
     'dev_context_ids': context_ids[len(train):],
     'trn_context_features': context_features[:len(train)],
@@ -293,8 +299,14 @@ with open('SQuAD/data.msgpack', 'wb') as f:
 if args.sample_size:
     sample_size = args.sample_size
     sample = {
+        'trn_question_tokens': result['trn_question_tokens'][:sample_size],
+        'dev_question_tokens': result['dev_question_tokens'][:sample_size],
+        'trn_question_text': result['trn_question_text'][:sample_size],
+        'dev_question_text': result['dev_question_text'][:sample_size],
         'trn_question_ids': result['trn_question_ids'][:sample_size],
         'dev_question_ids': result['dev_question_ids'][:sample_size],
+        'trn_context_tokens': result['trn_context_tokens'][:sample_size],
+        'dev_context_tokens': result['dev_context_tokens'][:sample_size],
         'trn_context_ids': result['trn_context_ids'][:sample_size],
         'dev_context_ids': result['dev_context_ids'][:sample_size],
         'trn_context_features': result['trn_context_features'][:sample_size],
